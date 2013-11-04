@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>trans-form</title>
+<link rel="stylesheet" type="text/css" href="/static/utils.css">
+<style>
+
+body {
+    margin: 10px;
+}
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 0px;
+}
+
+</style>
+</head>
+<body>
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="/gl519/jquery.cookie.js"></script>
+<script src="/gl519/index.js"></script>
+<script src="/static/utils.js"></script>
+<script>
+
+function drawInstructions() {
+	var d = $('<div/>')
+	d.append($('<div style="margin-bottom:10px"><b>instructions:</b> transcribe information from form</div>'))
+	d.append($('<div style="float:left"><b>example:</b> for </div>'))
+	d.append($('<img style="margin-left:10px;margin-right:10px;float:left" src="/static/form.png"/>'))
+	d.append($('<div style="float:left"> write </div>'))
+	d.append($('<div style="margin-bottom:10px;border:1px dotted grey;padding:5px;margin-left:10px;float:left">No: 1433<br/>Page: 2</div>'))
+	d.append($('<hr style="clear:both"/>'))
+	return d
+}
+
+function drawMain(img) {
+	var d = $('<div/>')
+	d.append(drawInstructions())
+	d.append($('<img/>').attr('src', img))
+	d.append($('<div/>').text('write here:'))
+	var t = null
+	d.append(t = $('<textarea style="width:500px;height:300px"/>'))
+	d.append($('<br/>'))
+	d.append($('<div class="bluepill" style="margin-top:10px"/>').text('I transcribed all the information from the form').click(function () {
+		rpc('submit', {
+			img : img,
+			text : t.val()
+		}, function () {
+			if (isHIT())
+				mturkSubmit()
+			else
+				location.reload()
+		})
+	}))
+
+	return d
+}
+
+$(function () {
+	$('body').append(createThrobber())
+	rpc('grab', function (r) {
+		$('body').empty().append(drawMain(r.img))
+		mturkCheckPreview()
+	})
+})
+
+</script>
+</body>
+</html>
