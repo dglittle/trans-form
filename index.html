@@ -57,12 +57,30 @@ function drawMain(img) {
 	return d
 }
 
+function drawResult(r) {
+	var d = $('<div/>')
+	d.append($('<img/>').attr('src', r.result.img))
+	d.append($('<pre/>').text(r.result.text))
+	d.append($('<hr/>'))
+	return d
+}
+
+function drawResults(rs) {
+	return $('<div/>').append(_.map(rs, drawResult))
+}
+
 $(function () {
 	$('body').append(createThrobber())
-	rpc('grab', function (r) {
-		$('body').empty().append(drawMain(r.img))
-		mturkCheckPreview()
-	})
+	if (_.getUrlParams().results != null) {
+		rpc('getResults', 1 * _.getUrlParams().results, function (rs) {
+			$('body').empty().append(drawResults(rs))
+		})
+	} else {
+		rpc('grab', function (r) {
+			$('body').empty().append(drawMain(r.img))
+			mturkCheckPreview()
+		})
+	}
 })
 
 </script>

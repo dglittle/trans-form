@@ -25,6 +25,12 @@ _.run(function () {
         })
     }
 
+    rpc.getResults = function (arg, req) {
+        return dbEval(db, function (arg) {
+            return db.results.find({}).skip(arg).limit(100).toArray()
+        }, arg)
+    }
+
     rpc.submit = function (arg, req) {
         return dbEval(db, function (arg, user) {
             db.results.insert({
